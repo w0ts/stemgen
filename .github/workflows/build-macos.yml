@@ -146,10 +146,13 @@ jobs:
             dist/*.dmg
             dist/*.dmg.sha256
 
-      # Short-lived copy for non-tag runs / convenience. continue-on-error so
-      # a storage-quota hiccup here can never fail the job or block the
-      # release step above.
+      # Short-lived copy for non-tag runs only. Tag builds skip it: the
+      # release assets above are the durable copy, and the artifact would
+      # only count against the free plan's 0.5 GB Actions storage.
+      # continue-on-error so a storage-quota hiccup here can never fail the
+      # job.
       - name: Upload .dmg artifact
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v5
         continue-on-error: true
         with:
